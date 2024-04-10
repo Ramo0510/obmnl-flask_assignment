@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+    
     <style>
         body {
             background: linear-gradient(to right, #f6d365, #fda085);
@@ -68,7 +69,34 @@
 
         <div class="d-flex justify-content-center">
             <a class="btn btn-success" href="{{ url_for('add_transaction') }}">Add Transaction</a>
-        </div>
+        </div><br>
+
+        <tr class="col-md-4">
+            <td colspan="2" class="text-right">Total Balance:</td>
+            <td>{{ total_balance }}</td>
+        </tr><br>
+        <tr class="col-md-4">
+            <td>Nombre de Transactions:</td>
+            <td>{{ total_transactions }}</td>
+        </tr>
+
+        <div id="system_response" style="padding: 25px 25px 25px 25px;"></div>
+
+        <!-- Ajoutez la pagination -->
+    <nav aria-label="Page navigation example">
+        <ul class="pagination justify-content-center">
+            {% if current_page > 1 %}
+            <li class="page-item"><a class="page-link" href="?page={{ current_page - 1 }}">Précédent</a></li>
+            {% endif %}
+            {% for page in range(1, total_pages + 1) %}
+            <li class="page-item {% if page == current_page %}active{% endif %}"><a class="page-link" href="?page={{ page }}">{{ page }}</a></li>
+            {% endfor %}
+            {% if current_page < total_pages %}
+            <li class="page-item"><a class="page-link" href="?page={{ current_page + 1 }}">Suivant</a></li>
+            {% endif %}
+        </ul>
+    </nav>
+
     </div>
 </body>
 </html>

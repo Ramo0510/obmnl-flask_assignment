@@ -1,5 +1,6 @@
 # Import libraries
 from flask import Flask, redirect, request, render_template, url_for
+from math import ceil
 
 # Instantiate Flask functionality
 app = Flask(__name__)
@@ -11,10 +12,23 @@ transactions = [
     {'id': 3, 'date': '2023-06-03', 'amount': 300}
 ]
 
+
+# Définissez une fonction pour diviser la liste des transactions en groupes de 8
+def paginate_transactions(transactions, page_number):
+    transactions_per_page = 8
+    start_index = (page_number - 1) * transactions_per_page
+    end_index = start_index + transactions_per_page
+    return transactions[start_index:end_index]
+
 # Read operation: List all transactions
 @app.route("/")
 def get_transactions():
-    return render_template("transactions.html", transactions=transactions)
+    page_number = int(request.args.get('page', 1))
+    total_pages = ceil(len(transactions) / 8)
+    current_transactions = paginate_transactions(transactions, page_number)
+    return render_template("transactions.html", transactions=current_transactions, total_balance=total_balance(), total_transactions=len(transactions), total_pages=total_pages, current_page=page_number)
+    return render_template("transactions.html", transactions=transactions, total_balance=total_balance())
+
 
 # Create operation: Display add transaction form
 @app.route("/add", methods=["GET", "POST"])
@@ -70,6 +84,13 @@ def delete_transaction(transaction_id):
     # Redirect to the transactions list page
     return redirect(url_for("get_transactions"))
 
+# Définissez la route pour le total balance
+@app.route("/balance")
+def total_balance():
+    # Calculez le total balance en sommant les montants de toutes les transactions
+    total = sum(t["amount"] for t in transactions)
+    # Retournez le total balance sous forme de chaîne de caractères
+    return "Total Balance: {}".format(total)
 
 
 # Run the Flask app
